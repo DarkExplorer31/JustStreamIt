@@ -1,0 +1,35 @@
+body {
+    background: #1d1c1c;
+    color: #0d1edf
+}
+
+header {
+    background-color: rgba(4, 2, 23, .727);
+    margin: auto;
+    border: 1rem 1rem solid #0d1edf;
+    text-align: center;
+    font-size: 2rem
+}
+
+.best-movie__title {
+    background-color: #000
+}
+
+section {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: auto;
+    justify-content: center
+}
+
+section div {
+    margin: 1rem
+}
+
+button {
+    width: 4.5rem;
+    height: 1.5rem;
+    margin: 4rem
+}
+
+/*# sourceMappingURL=style.css.map */

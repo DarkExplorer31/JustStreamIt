@@ -1,0 +1,43 @@
+$text_color : rgb(13, 30, 223);
+
+body {
+    background: rgb(29, 28, 28);
+    color: $text_color;
+}
+
+header {
+    background-color: rgba(4, 2, 23, 0.727);
+    margin: auto;
+    border: 1rem 1rem solid $text-color;
+    text-align: center;
+    font-size: 2rem;
+
+}
+
+@mixin display_picture {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: auto;
+    justify-content: center;
+
+    div {
+        margin: 1rem;
+    }
+}
+
+.best-movie {
+    &__title {
+        background-color: black;
+    }
+}
+
+section {
+    @include display_picture;
+}
+
+
+button {
+    width: 4.5rem;
+    height: 1.5rem;
+    margin: 4rem;
+}
