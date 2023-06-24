@@ -5,35 +5,62 @@ body {
     color: $text_color;
 }
 
+@mixin border() {
+    border: 0.1em solid $text_color;
+}
+
 header {
     background-color: rgba(4, 2, 23, 0.727);
     margin: auto;
-    border: 1rem 1rem solid $text-color;
+    @include border;
+    border-radius: 1em;
     text-align: center;
     font-size: 2rem;
 
+    a {
+        &:hover {
+            color: $text-color;
+        }
+    }
+
 }
 
-@mixin display_picture {
+@mixin img-scale($width, $heigth) {
+    margin-left: 1em;
+    margin-bottom: 3em;
+    @include border;
+    border-radius: 1em;
+    position: relative;
+    overflow: hidden;
+    width: $width;
+    height: $heigth;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}
+
+
+@mixin position() {
     display: flex;
     flex-wrap: nowrap;
-    margin: auto;
     justify-content: center;
-
-    div {
-        margin: 1rem;
-    }
 }
 
-.best-movie {
-    &__title {
-        background-color: black;
-    }
+#best-movie {
+    margin-top: 3em;
 }
 
 section {
-    @include display_picture;
+    @include position();
+
+    img {
+        @include img-scale(12em, 18em);
+    }
 }
+
 
 
 button {
