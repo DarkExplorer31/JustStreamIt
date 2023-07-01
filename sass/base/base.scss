@@ -1,4 +1,7 @@
 $text_color : rgb(13, 30, 223);
+$close-color: #ff365e;
+$modal-font: hsla(0, 0%, 100%, 0.564);
+$title-font: rgba(4, 2, 23, 0.727);
 
 body {
     background: rgb(29, 28, 28);
@@ -7,64 +10,178 @@ body {
 
 @mixin border() {
     border: 0.1em solid $text_color;
+    border-radius: 1em;
 }
 
 header {
-    background-color: rgba(4, 2, 23, 0.727);
+    background-color: $title-font;
     margin: auto;
     @include border;
-    border-radius: 1em;
     text-align: center;
-    font-size: 2rem;
+    font-size: 2.5rem;
 
     a {
+        padding: 20px;
+
         &:hover {
-            color: $text-color;
+            color: $text_color;
         }
     }
 
 }
 
 @mixin img-scale($width, $heigth) {
-    margin-left: 1em;
+    margin-left: 2em;
     margin-bottom: 3em;
     @include border;
-    border-radius: 1em;
     position: relative;
-    overflow: hidden;
     width: $width;
     height: $heigth;
-    transition: transform 0.3s ease-in-out;
-    z-index: 1;
+    transition: transform 0.3s ease-out;
 
     &:hover {
         transform: scale(1.2);
+        box-shadow: 0 0 0.5em 0.5em rgba(0, 0, 0, 0.558);
     }
 }
 
-
-@mixin position() {
+@mixin center() {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
-#best-movie {
+.best-movie {
     margin-top: 3em;
 }
 
-section {
-    @include position();
+.best-movie {
+
+    @include center;
+
+    h2 {
+        font-size: 3em;
+    }
 
     img {
-        @include img-scale(12em, 18em);
+        @include img-scale(22em, 28em);
     }
 }
 
 
+section {
+    h3 {
+        @include center;
+        font-size: 2em;
+    }
 
-button {
-    width: 4.5rem;
-    height: 1.5rem;
-    margin: 4rem;
+    div {
+        @include center;
+    }
+
+    img {
+        @include img-scale(14em, 20em);
+    }
+
+    button {
+        @include border;
+        height: 4em;
+        width: 8em;
+        cursor: pointer;
+        text-align: center;
+        color: $text_color;
+        background-color: $modal-font;
+        margin: 10px;
+
+        &:hover {
+            cursor: pointer;
+            background-color: darken($modal-font, 30%);
+            transform: scale(1.4);
+        }
+    }
+}
+
+
+.modal-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+
+    h2 {
+        font-size: 3em;
+        @include border;
+        text-align: center;
+        background-color: $title-font;
+    }
+
+    img {
+        @include border;
+    }
+
+    &.active {
+        display: block;
+    }
+
+    &__overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: hwb(0 0% 100% / 0.815);
+    }
+
+    &__modal {
+        width: 45%;
+        height: 85%;
+        margin: 100px auto;
+        padding: 30px;
+        background: $modal-font;
+        border-radius: 5px;
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: justify;
+        @include border;
+        overflow: auto;
+        word-wrap: break-word;
+
+        &::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: #0d1edf79;
+            border-radius: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: $text_color;
+            border-radius: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: darken($text_color, 20%);
+        }
+
+    }
+
+    &__close {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        background: $close-color;
+        color: $modal-font;
+
+        &:hover {
+            background-color: darken($close-color, 20%);
+        }
+    }
 }
