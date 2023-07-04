@@ -3,9 +3,11 @@ $close-color: #ff365e;
 $modal-font: hsla(0, 0%, 100%, 0.564);
 $title-font: rgba(4, 2, 23, 0.727);
 
+
 body {
     background: rgb(29, 28, 28);
     color: $text_color;
+    font-family: "Courier New", "Arial", sans-serif;
 }
 
 @mixin border() {
@@ -117,8 +119,29 @@ section {
         background-color: $title-font;
     }
 
-    img {
-        @include border;
+    &__header {
+        img {
+            float: left;
+            @include border;
+            width: 200px;
+            height: 275px;
+        }
+
+        h3 {
+            padding-left: 12em;
+            text-transform: capitalize;
+        }
+    }
+
+    &__body {
+        margin-top: 10em;
+
+        p {
+            @include border;
+            padding: 0.4em;
+            background-color: darken($modal-font, 50%);
+            font-weight: bold;
+        }
     }
 
     &.active {
