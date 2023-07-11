@@ -1,32 +1,40 @@
-$text_color : rgb(13, 30, 223);
+$second_color : rgb(13, 30, 223);
 $close-color: #ff365e;
-$modal-font: hsla(0, 0%, 100%, 0.564);
+$main-color: hsla(0, 0%, 100%, 0.802);
 $title-font: rgba(4, 2, 23, 0.727);
-
 
 body {
     background: rgb(29, 28, 28);
-    color: $text_color;
-    font-family: "Courier New", "Arial", sans-serif;
+    color: $main-color;
+    font-family: Georgia, serif;
 }
 
 @mixin border() {
-    border: 0.1em solid $text_color;
+    border: 0.1em solid $main-color;
     border-radius: 1em;
 }
 
 header {
     background-color: $title-font;
-    margin: auto;
-    @include border;
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 3rem;
+    padding: 20px;
+
+    h1 {
+        padding: 20px;
+        margin: 0px;
+    }
 
     a {
         padding: 20px;
+        margin: 20px auto;
+        text-decoration: none;
+        color: $second_color;
+        font-weight: bold;
 
         &:hover {
-            color: $text_color;
+            color: $main-color;
+            font-size: 1.2em;
         }
     }
 
@@ -54,27 +62,64 @@ header {
 }
 
 .best-movie {
-    margin-top: 3em;
-}
-
-.best-movie {
-
-    @include center;
+    margin-top: 2em;
 
     h2 {
+        text-align: center;
         font-size: 3em;
     }
 
-    img {
-        @include img-scale(22em, 28em);
+    &__division {
+        float: left;
+        margin-left: 3em;
+        width: 30%;
+
+        h3 {
+            font-size: 2.2em;
+            text-align: left;
+        }
+
+        p {
+            text-align: justify;
+            padding: 1em;
+            font-weight: bold;
+        }
+
+        button {
+            width: 50px;
+            height: 50px;
+            float: right;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/2468/2468801.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+
+            &:hover {
+                width: 70px;
+                height: 70px;
+            }
+        }
+    }
+
+    &__image_division {
+        float: right;
+        width: 65%;
+
+        img {
+            @include border;
+            @include img-scale(32em, 38em);
+        }
     }
 }
 
-
-section {
-    h3 {
+@mixin section_style {
+    h2 {
         @include center;
-        font-size: 2em;
+        font-size: 2.7em;
+        text-transform: capitalize;
     }
 
     div {
@@ -87,22 +132,40 @@ section {
 
     button {
         @include border;
-        height: 4em;
-        width: 8em;
+        height: 3em;
+        width: 5em;
+        font-size: 20px;
+        padding: 0.5em;
         cursor: pointer;
         text-align: center;
-        color: $text_color;
-        background-color: $modal-font;
+        color: $second_color;
+        background-color: darken($main-color, 30%);
         margin: 10px;
 
         &:hover {
             cursor: pointer;
-            background-color: darken($modal-font, 30%);
+            background-color: $main-color;
             transform: scale(1.4);
         }
     }
 }
 
+#top-rated {
+    margin-top: 44em;
+    @include section_style
+}
+
+#action {
+    @include section_style
+}
+
+#adventure {
+    @include section_style
+}
+
+#animation {
+    @include section_style
+}
 
 .modal-container {
     display: none;
@@ -111,12 +174,11 @@ section {
     width: 100vw;
     height: 100vh;
     z-index: 9999;
+    color: $second_color;
 
     h2 {
         font-size: 3em;
-        @include border;
         text-align: center;
-        background-color: $title-font;
     }
 
     &__header {
@@ -130,17 +192,26 @@ section {
         h3 {
             padding-left: 12em;
             text-transform: capitalize;
+
+            span {
+                font-weight: normal;
+            }
         }
+
     }
 
     &__body {
         margin-top: 10em;
 
         p {
-            @include border;
             padding: 0.4em;
-            background-color: darken($modal-font, 50%);
+
+        }
+
+        strong {
+            font-size: 1.2em;
             font-weight: bold;
+            text-transform: capitalize;
         }
     }
 
@@ -160,7 +231,7 @@ section {
         height: 85%;
         margin: 100px auto;
         padding: 30px;
-        background: $modal-font;
+        background: $main-color;
         border-radius: 5px;
         position: absolute;
         top: 40%;
@@ -172,7 +243,7 @@ section {
         word-wrap: break-word;
 
         &::-webkit-scrollbar {
-            width: 7px;
+            width: 10px;
         }
 
         &::-webkit-scrollbar-track {
@@ -181,12 +252,12 @@ section {
         }
 
         &::-webkit-scrollbar-thumb {
-            background-color: $text_color;
+            background-color: $second_color;
             border-radius: 5px;
         }
 
         &::-webkit-scrollbar-thumb:hover {
-            background-color: darken($text_color, 20%);
+            background-color: darken($second_color, 20%);
         }
 
     }
@@ -201,10 +272,69 @@ section {
         right: 10px;
         cursor: pointer;
         background: $close-color;
-        color: $modal-font;
+        color: $main-color;
 
         &:hover {
             background-color: darken($close-color, 20%);
         }
     }
+}
+
+@media screen and (max-width:1000px) {
+    header {
+        background-color: $title-font;
+        text-align: center;
+        font-size: 2em;
+
+        a {
+            display: none;
+        }
+
+    }
+
+    .best-movie {
+        &__division {
+            float: left;
+            width: 20%;
+        }
+
+        &__image_division {
+            float: right;
+            width: 70%;
+
+            img {
+                @include border;
+                @include img-scale(32em, 38em);
+            }
+        }
+    }
+}
+
+@media screen and (max-width:800px) {
+    .best-movie {
+
+        &__division {
+            float: left;
+            width: 30%;
+            margin-left: 0em;
+        }
+
+        &__image_division {
+            float: right;
+            width: 60%;
+            margin-right: 1em;
+
+            img {
+                margin: 0.5em;
+                @include border;
+                @include img-scale(20em, 26em);
+            }
+        }
+    }
+
+    #top-rated {
+        margin-top: 34em;
+
+    }
+
 }

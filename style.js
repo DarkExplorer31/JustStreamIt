@@ -1,15 +1,25 @@
 /*Set the constants for all categories to show,
 there will be a same number of carousels as
 numbers of index in allCategories and allUrls if 
-allCategories.length and allUrls.length are equals.
+allCategories.length and allUrls.length are equals,
+Except for Best movie division, all section/category 
+can be add or delete, just in add a valid URL and a name
+in allCategories and allUrls.
 */
-const allCategories = ['best-movie', "top-rated", 'action', 'adventure', 'animation']
+const allCategories = ["best-movie", "top-rated", 'action', 'adventure', 'animation']
 const urlBase = "http://localhost:8000/api/v1/titles/?";
 const allUrls = [urlBase + 'sort_by=-votes,-imdb_score&page_size=1', urlBase + 'sort_by=-votes,-imdb_score&page_size=20', urlBase + 'genre=action&sort_by=-votes,-imdb_score&page_size=20', urlBase + 'genre=adventure&sort_by=-votes,-imdb_score&page_size=20', urlBase + 'genre=animation&sort_by=-votes,-imdb_score&page_size=20']
 
 //Set the number of images to show in all carousels by size of window
-const imgToShow = 5;
-
+function manageResize() {
+    let imgToShow = 5;
+    if (window.innerWidth < 980) {
+        imgToShow = 2;
+    } else if (window.innerWidth > 980 && window.innerWidth < 1450) {
+        imgToShow = 3;
+    };
+    return imgToShow;
+}
 
 //Take all pictures from movies
 async function fetchData(url) {
@@ -18,26 +28,65 @@ async function fetchData(url) {
     return resultOfResponse.results;
 }
 
-async function setBestMovie(url, className) {
-    //Display an Image and return all urls for details
-    let bestMovie = await fetchData(url);
-    //Take url of the best movie id
-    let bestMovieURL = bestMovie[0].url;
-    let bestMovieData = await fetch(bestMovieURL)
-    const bestMovieSelector = document.getElementsByClassName(className)[0];
-    let movieImg = document.createElement("img");
-    movieImg.alt = bestMovieData.url;
-    movieImg.src = bestMovie[0].image_url;
-    movieImg.title = bestMovie[0].title;
-    bestMovieSelector.appendChild(movieImg);
+//Create all section
+async function setSection(id) {
+    const mainPage = document.querySelector("article");
+    let sectionToAdd = document.createElement("section");
+    let sectionTitle = document.createElement("h2");
+
+    if (id !== "best-movie") {
+        sectionToAdd.id = id;
+        sectionTitle.textContent = id;
+        sectionToAdd.appendChild(sectionTitle);
+    } else {
+        sectionToAdd.classList.add(id);
+        sectionTitle.textContent = "Best Movie";
+        sectionToAdd.appendChild(sectionTitle);
+    }
+
+    mainPage.appendChild(sectionToAdd);
+    return sectionToAdd;
 }
 
-async function setButton() {
+async function setBestMovie(url, className, section) {
+    let bestMovie = await fetchData(url);
+    //Take url of the best movie
+    let bestMovieData = await fetch(bestMovie[0].url)
+    bestMovieData = await bestMovieData.json()
+    //Create a division for best movie
+    const bestMovieDivision = document.createElement("div");
+    bestMovieDivision.classList.add(className + '__division');
+    //Create title
+    const bestMovieTitle = document.createElement("h3");
+    bestMovieTitle.textContent = bestMovieData.original_title;
+    bestMovieDivision.appendChild(bestMovieTitle);
+    //Create description
+    const bestMovieDescription = document.createElement("p");
+    bestMovieDescription.textContent = bestMovieData.description;
+    bestMovieDivision.appendChild(bestMovieDescription);
+    //Create button
+    const bestMoviePlayButton = document.createElement("button");
+    bestMovieDivision.appendChild(bestMoviePlayButton);
+    //Create image
+    const bestMovieImageDivision = document.createElement("div");
+    bestMovieImageDivision.classList.add(className + '__image_division');
+    let movieImg = document.createElement("img");
+    movieImg.alt = bestMovie[0].url;
+    movieImg.src = bestMovie[0].image_url;
+    movieImg.classList.add("modal-trigger")
+    movieImg.title = bestMovieData.original_title;
+    bestMovieImageDivision.appendChild(movieImg);
+    //Put this division in main page
+    section.appendChild(bestMovieDivision);
+    section.appendChild(bestMovieImageDivision);
+}
+
+async function setButtons() {
     let buttonDiv = document.createElement("div");
     let previousButton = document.createElement("button");
     previousButton.classList.add("prev-button");
-    buttonDiv.appendChild(previousButton);
     previousButton.textContent = "Previous";
+    buttonDiv.appendChild(previousButton);
 
     let nextButton = document.createElement("button");
     nextButton.classList.add("next-button");
@@ -53,13 +102,11 @@ function displayImageError(unfoundImage) {
     return unfoundImage;
 }
 
-async function setImagesDivision(url, id) {
+async function setImagesDivision(url, id, section) {
     let movies = await fetchData(url);
-    const moviesSelector = document.getElementById(id);[0];
     //prepare for the carousel
     let carouselDiv = document.createElement("div");
     carouselDiv.classList.add('carousel__' + id);
-    moviesSelector.appendChild(carouselDiv);
     let moviesData = [];
     for (let result of movies) {
         moviesData.push(result);
@@ -73,12 +120,10 @@ async function setImagesDivision(url, id) {
         movieImg.classList.add("modal-trigger")
         carouselDiv.appendChild(movieImg);
     }
-
-    let buttonDiv = await setButton();
-    moviesSelector.appendChild(carouselDiv);
-    moviesSelector.appendChild(buttonDiv)
-    console.log(moviesData)
-    return moviesSelector
+    section.appendChild(carouselDiv);
+    let buttonDiv = await setButtons();
+    section.appendChild(buttonDiv);
+    return section;
 }
 
 //Make a modal
@@ -115,21 +160,37 @@ function createModal(movieData, completeModal) {
     modalHeader.appendChild(movieImg);
 
     const importantKeys = ["year", "duration", "genres", "directors"]
-    const keysToIgnore = ['id', 'budget', 'budget_currency', 'url', 'title', 'metascore', "reviews_from_users", 'long_description', 'image_url', "usa_gross_income", "original_title", 'votes', 'worldwide_gross_income', 'reviews_from_critics'];
+    const keysToIgnore = ['id', 'budget', 'budget_currency', 'url', 'title', 'metascore', "reviews_from_users", 'description', 'image_url', "usa_gross_income", "original_title", 'votes', 'worldwide_gross_income', 'reviews_from_critics'];
 
     for (let key in movieData) {
         if (!keysToIgnore.includes(key) && !importantKeys.includes(key)) {
             let moviesData = document.createElement("p");
-            let text = key.toUpperCase() + ": " + movieData[key];
-            moviesData.textContent = text.replace("_", " ");
+
+            let keyElement = document.createElement("strong");
+            keyElement.textContent = key.replace("_", " ");
+
+            let textElement = document.createElement("span");
+            textElement.textContent = ": " + movieData[key];
+
+            moviesData.appendChild(keyElement);
+            moviesData.appendChild(textElement);
             modalBody.appendChild(moviesData);
         }
         else if (importantKeys.includes(key)) {
             let moviesImportantInfo = document.createElement("h3");
-            moviesImportantInfo.textContent = key + ": " + movieData[key];
+            let keyElement = document.createElement("strong");
+            keyElement.textContent = key.toUpperCase();
+
+            let textElement = document.createElement("span");
+            let text = ": " + movieData[key];
+            text = text.replaceAll("  ", " ").replaceAll(",", ", ")
+            textElement.textContent = text;
+
+            moviesImportantInfo.appendChild(keyElement);
+            moviesImportantInfo.appendChild(textElement);
             modalHeader.appendChild(moviesImportantInfo);
         }
-    };
+    }
 
     completeModal.appendChild(modalHeader);
     completeModal.appendChild(modalBody);
@@ -162,6 +223,7 @@ async function toggleModal(event) {
 
 //make a carousel
 function updateVisibility(allElements, currentPosition) {
+    imgToShow = manageResize();
     allElements.forEach((image, index) => {
         if (index >= currentPosition && index < currentPosition + imgToShow) {
             image.style.display = "block";
@@ -171,8 +233,8 @@ function updateVisibility(allElements, currentPosition) {
     });
 }
 
-async function setCarousel(url, id) {
-    let division = await setImagesDivision(url, id);;
+async function setCarousel(url, id, section) {
+    let division = await setImagesDivision(url, id, section);
     let allElements = division.querySelectorAll("img");
     let previousButton = division.querySelector(".prev-button");
     let nextButton = division.querySelector(".next-button");
@@ -197,16 +259,24 @@ async function setCarousel(url, id) {
 }
 
 async function setAllCarousel() {
-    if (allCategories.length === allUrls.length) {
-        for (let i = 0; i < allCategories.length; i++) {
-            if (i === 0) {
-                await setBestMovie(allUrls[i], allCategories[i])
-            } else {
-                await setCarousel(allUrls[i], allCategories[i])
-            }
+    let section;
+    for (let i = 0; i < allCategories.length; i++) {
+        if (i === 0) {
+            section = await setSection(allCategories[i]);
+            await setBestMovie(allUrls[i], allCategories[i], section);
+        } else {
+            section = await setSection(allCategories[i]);
+            await setCarousel(allUrls[i], allCategories[i], section);
         }
-    } else {
-        console.log("Les deux listes ne sont pas égales")
+    }
+}
+
+function responsive() {
+    let newNumberOfImg = manageResize();
+    if (imgToShow !== newNumberOfImg) {
+        imgToShow = newNumberOfImg;
+        // refresh the page
+        location.reload();
     }
 }
 
@@ -215,6 +285,8 @@ async function initialize() {
     const modalTriggers = document.querySelectorAll(".modal-trigger");
 
     modalTriggers.forEach(triggers => triggers.addEventListener("click", toggleModal));
+
+    window.addEventListener("resize", responsive);
 
 }
 
