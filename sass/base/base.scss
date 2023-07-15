@@ -1,44 +1,8 @@
-$second_color : rgb(13, 30, 223);
+$id-name-list: "best-movie", "top-rated", "action", "adventure", "animation";
+$second_color : rgba(8, 32, 242, 0.85);
 $close-color: #ff365e;
 $main-color: hsla(0, 0%, 100%, 0.802);
 $title-font: rgba(4, 2, 23, 0.727);
-
-body {
-    background: rgb(29, 28, 28);
-    color: $main-color;
-    font-family: Georgia, serif;
-}
-
-@mixin border() {
-    border: 0.1em solid $main-color;
-    border-radius: 1em;
-}
-
-header {
-    background-color: $title-font;
-    text-align: center;
-    font-size: 3rem;
-    padding: 20px;
-
-    h1 {
-        padding: 20px;
-        margin: 0px;
-    }
-
-    a {
-        padding: 20px;
-        margin: 20px auto;
-        text-decoration: none;
-        color: $second_color;
-        font-weight: bold;
-
-        &:hover {
-            color: $main-color;
-            font-size: 1.2em;
-        }
-    }
-
-}
 
 @mixin img-scale($width, $heigth) {
     margin-left: 2em;
@@ -61,58 +25,9 @@ header {
     justify-content: center;
 }
 
-.best-movie {
-    margin-top: 2em;
-
-    h2 {
-        text-align: center;
-        font-size: 3em;
-    }
-
-    &__division {
-        float: left;
-        margin-left: 3em;
-        width: 30%;
-
-        h3 {
-            font-size: 2.2em;
-            text-align: left;
-        }
-
-        p {
-            text-align: justify;
-            padding: 1em;
-            font-weight: bold;
-        }
-
-        button {
-            width: 50px;
-            height: 50px;
-            float: right;
-            background-image: url('https://cdn-icons-png.flaticon.com/512/2468/2468801.png');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-
-            &:hover {
-                width: 70px;
-                height: 70px;
-            }
-        }
-    }
-
-    &__image_division {
-        float: right;
-        width: 65%;
-
-        img {
-            @include border;
-            @include img-scale(32em, 38em);
-        }
-    }
+@mixin border() {
+    border: 0.1em solid $main-color;
+    border-radius: 1em;
 }
 
 @mixin section_style {
@@ -150,21 +65,168 @@ header {
     }
 }
 
-#top-rated {
-    margin-top: 44em;
-    @include section_style
+@mixin applicate-on-designated-id($id-list) {
+    $first-section: nth($id-list, 1);
+    $second-section: nth($id-list, 1);
+
+    @each $id in $id-list {
+        @if ($id ==$first-section ) {
+            .#{$id} {
+                margin-top: 2em;
+                margin-bottom: 44em;
+
+                h2 {
+                    text-align: center;
+                    font-size: 3em;
+                }
+
+                &__division {
+                    float: left;
+                    margin-left: 3em;
+                    width: 30%;
+
+                    h3 {
+                        font-size: 2.2em;
+                        text-align: left;
+                    }
+
+                    p {
+                        text-align: justify;
+                        padding: 1em;
+                        font-weight: bold;
+                    }
+
+                    button {
+                        width: 50px;
+                        height: 50px;
+                        float: right;
+                        background-image: url('https://cdn-icons-png.flaticon.com/512/2468/2468801.png');
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-color: transparent;
+                        border: none;
+                        cursor: pointer;
+
+                        &:hover {
+                            width: 70px;
+                            height: 70px;
+                        }
+                    }
+                }
+
+                &__image_division {
+                    float: right;
+                    width: 65%;
+
+                    img {
+                        @include border;
+                        @include img-scale(32em, 38em);
+                    }
+                }
+            }
+        }
+
+        @else if ($id ==$second-section) {
+            ##{$id} {
+                @include section-style;
+            }
+        }
+
+        ##{$id} {
+            @include section-style;
+        }
+    }
+
+    @media screen and (max-width:1000px) {
+        header {
+            background-color: $title-font;
+            text-align: center;
+            font-size: 2em;
+
+            a {
+                display: none;
+            }
+
+        }
+
+        .#{$first-section} {
+            &__division {
+                float: left;
+                width: 20%;
+            }
+
+            &__image_division {
+                float: right;
+                width: 70%;
+
+                img {
+                    @include border;
+                    @include img-scale(32em, 38em);
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width:800px) {
+        .#{$first-section} {
+            margin-bottom: 34em;
+
+            &__division {
+                float: left;
+                width: 30%;
+                margin-left: 0em;
+            }
+
+            &__image_division {
+                float: right;
+                width: 60%;
+                margin-right: 1em;
+
+                img {
+                    margin: 0.5em;
+                    @include border;
+                    @include img-scale(20em, 26em);
+                }
+            }
+        }
+
+    }
 }
 
-#action {
-    @include section_style
+
+body {
+    @include applicate-on-designated-id($id-name-list);
+    background: rgb(29, 28, 28);
+    color: $main-color;
+    font-family: Georgia, serif;
 }
 
-#adventure {
-    @include section_style
-}
+header {
+    background-color: $title-font;
+    text-align: center;
+    font-size: 3rem;
+    padding: 20px;
 
-#animation {
-    @include section_style
+    h1 {
+        padding: 20px;
+        margin: 0px;
+    }
+
+    a {
+        padding: 20px;
+        margin: 20px auto;
+        text-decoration: none;
+        font-size: 0.6em;
+        color: $main-color;
+        font-weight: bold;
+
+        &:hover {
+            color: $main-color;
+            font-size: 1em;
+        }
+    }
+
 }
 
 .modal-container {
@@ -278,63 +340,4 @@ header {
             background-color: darken($close-color, 20%);
         }
     }
-}
-
-@media screen and (max-width:1000px) {
-    header {
-        background-color: $title-font;
-        text-align: center;
-        font-size: 2em;
-
-        a {
-            display: none;
-        }
-
-    }
-
-    .best-movie {
-        &__division {
-            float: left;
-            width: 20%;
-        }
-
-        &__image_division {
-            float: right;
-            width: 70%;
-
-            img {
-                @include border;
-                @include img-scale(32em, 38em);
-            }
-        }
-    }
-}
-
-@media screen and (max-width:800px) {
-    .best-movie {
-
-        &__division {
-            float: left;
-            width: 30%;
-            margin-left: 0em;
-        }
-
-        &__image_division {
-            float: right;
-            width: 60%;
-            margin-right: 1em;
-
-            img {
-                margin: 0.5em;
-                @include border;
-                @include img-scale(20em, 26em);
-            }
-        }
-    }
-
-    #top-rated {
-        margin-top: 34em;
-
-    }
-
 }

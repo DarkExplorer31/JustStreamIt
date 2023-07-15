@@ -1,14 +1,27 @@
-/*Set the constants for all categories to show,
-there will be a same number of carousels as
-numbers of index in allCategories and allUrls if 
-allCategories.length and allUrls.length are equals,
-Except for Best movie division, all section/category 
-can be add or delete, just in add a valid URL and a name
-in allCategories and allUrls.
+/*If one of catogories or all needs to change,
+only change the name of category of you want in allCategories.
+Don't forget change same value in base.scss, in $id-name-list value.
 */
-const allCategories = ["best-movie", "top-rated", 'action', 'adventure', 'animation']
+
+const allCategories = ["best-movie", "top-rated", 'action', 'adventure', 'animation'];
 const urlBase = "http://localhost:8000/api/v1/titles/?";
-const allUrls = [urlBase + 'sort_by=-votes,-imdb_score&page_size=1', urlBase + 'sort_by=-votes,-imdb_score&page_size=20', urlBase + 'genre=action&sort_by=-votes,-imdb_score&page_size=20', urlBase + 'genre=adventure&sort_by=-votes,-imdb_score&page_size=20', urlBase + 'genre=animation&sort_by=-votes,-imdb_score&page_size=20']
+const mainPage = document.querySelector("article");
+
+function defineAllUrls(categories) {
+    let allUrlRecover = [];
+    for (category of categories) {
+        if (category === categories[0]) {
+            allUrlRecover.push(urlBase + 'sort_by=-votes,-imdb_score&page_size=1');
+        } else if (category === categories[1]) {
+            allUrlRecover.push(urlBase + 'sort_by=-votes,-imdb_score&page_size=20');
+        } else {
+            allUrlRecover.push(urlBase + 'genre=' + category + '&sort_by=-votes,-imdb_score&page_size=20');
+        }
+    }
+    return allUrlRecover;
+}
+
+let allUrls = defineAllUrls(allCategories);
 
 //Set the number of images to show in all carousels by size of window
 function manageResize() {
@@ -17,8 +30,24 @@ function manageResize() {
         imgToShow = 2;
     } else if (window.innerWidth > 980 && window.innerWidth < 1450) {
         imgToShow = 3;
-    };
+    }
     return imgToShow;
+}
+
+async function createNav() {
+    const header = document.querySelector("header");
+    const navigator = document.createElement("nav");
+
+    for (let category of allCategories) {
+        if (category !== "best-movie") {
+            let anchor = document.createElement("a");
+            anchor.href = "#" + category;
+            category = category.toUpperCase();
+            anchor.textContent = category;
+            navigator.appendChild(anchor);
+        }
+    }
+    header.appendChild(navigator);
 }
 
 //Take all pictures from movies
@@ -30,12 +59,12 @@ async function fetchData(url) {
 
 //Create all section
 async function setSection(id) {
-    const mainPage = document.querySelector("article");
     let sectionToAdd = document.createElement("section");
     let sectionTitle = document.createElement("h2");
 
-    if (id !== "best-movie") {
+    if (id !== allCategories[0]) {
         sectionToAdd.id = id;
+        sectionToAdd.classList.add("existing");
         sectionTitle.textContent = id;
         sectionToAdd.appendChild(sectionTitle);
     } else {
@@ -51,8 +80,8 @@ async function setSection(id) {
 async function setBestMovie(url, className, section) {
     let bestMovie = await fetchData(url);
     //Take url of the best movie
-    let bestMovieData = await fetch(bestMovie[0].url)
-    bestMovieData = await bestMovieData.json()
+    let bestMovieData = await fetch(bestMovie[0].url);
+    bestMovieData = await bestMovieData.json();
     //Create a division for best movie
     const bestMovieDivision = document.createElement("div");
     bestMovieDivision.classList.add(className + '__division');
@@ -127,15 +156,28 @@ async function setImagesDivision(url, id, section) {
 }
 
 //Make a modal
-const modalContainer = document.querySelector(".modal-container")
+async function createModalWindow() {
+    const modalMainWindow = document.createElement("div");
+    modalMainWindow.classList.add("modal-container");
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-container__overlay");
+    modalOverlay.classList.add("modal-trigger");
+    modalMainWindow.appendChild(modalOverlay);
+    const container = document.createElement("div");
+    container.classList.add("modal-container__modal");
+    modalMainWindow.appendChild(container);
+    mainPage.appendChild(modalMainWindow);
+    return modalMainWindow;
+}
 
-function createCloseButton() {
+
+function createCloseButton(mainModal) {
     const closeButton = document.createElement("button");
     closeButton.classList.add("modal-container__close");
     closeButton.textContent = "X";
 
     closeButton.addEventListener("click", () => {
-        modalContainer.classList.remove("active");
+        mainModal.classList.remove("active");
     });
 
     return closeButton;
@@ -197,20 +239,19 @@ function createModal(movieData, completeModal) {
 }
 
 async function makeMovieDetailsModal(movieUrl) {
-    const modal = document.querySelector(".modal-container__modal");
+    let modal = document.querySelector(".modal-container__modal");
     // make empty modal
     modal.innerHTML = "";
     let movieData = await fetch(movieUrl);
     movieData = await movieData.json();
-
     createModal(movieData, modal);
-
     //Recreate the close button
-    let closeButton = createCloseButton();
+    let closeButton = createCloseButton(modal);
     modal.appendChild(closeButton);
 }
 
 async function toggleModal(event) {
+    const modalContainer = document.querySelector(".modal-container");
     const clickedImage = event.target;
     if (clickedImage.tagName === 'IMG') {
         const movieUrl = clickedImage.alt;
@@ -271,16 +312,21 @@ async function setAllCarousel() {
     }
 }
 
-function responsive() {
+async function responsive() {
+    let allSection = document.querySelectorAll(".existing");
     let newNumberOfImg = manageResize();
     if (imgToShow !== newNumberOfImg) {
         imgToShow = newNumberOfImg;
-        // refresh the page
-        location.reload();
+        for (let section of allSection) {
+            let allSectionElement = section.querySelectorAll("img");
+            updateVisibility(allSectionElement, 0);
+        }
     }
 }
 
 async function initialize() {
+    await createNav();
+    await createModalWindow();
     await setAllCarousel();
     const modalTriggers = document.querySelectorAll(".modal-trigger");
 
