@@ -3,7 +3,7 @@ only change the name of category of you want in allCategories.
 Don't forget change same value in base.scss, in $id-name-list value.
 */
 
-const allCategories = ["best-movie", "top-rated", 'action', 'adventure', 'animation'];
+const allCategories = ["best-movie", "top-rated", 'history', 'adventure', 'action', 'animation'];
 const urlBase = "http://localhost:8000/api/v1/titles/?";
 const mainPage = document.querySelector("article");
 
@@ -171,15 +171,10 @@ async function createModalWindow() {
 }
 
 
-function createCloseButton(mainModal) {
+function createCloseButton() {
     const closeButton = document.createElement("button");
     closeButton.classList.add("modal-container__close");
     closeButton.textContent = "X";
-
-    closeButton.addEventListener("click", () => {
-        mainModal.classList.remove("active");
-    });
-
     return closeButton;
 }
 
@@ -239,6 +234,7 @@ function createModal(movieData, completeModal) {
 }
 
 async function makeMovieDetailsModal(movieUrl) {
+    mainModal = document.querySelector(".modal-container")
     let modal = document.querySelector(".modal-container__modal");
     // make empty modal
     modal.innerHTML = "";
@@ -246,8 +242,12 @@ async function makeMovieDetailsModal(movieUrl) {
     movieData = await movieData.json();
     createModal(movieData, modal);
     //Recreate the close button
-    let closeButton = createCloseButton(modal);
+    let closeButton = createCloseButton();
     modal.appendChild(closeButton);
+
+    closeButton.addEventListener("click", () => {
+        mainModal.classList.remove("active");
+    });
 }
 
 async function toggleModal(event) {
